@@ -255,3 +255,51 @@ function reorderTasks(draggedId, targetId){
     saveTasks(tasks);
     render();
 }
+
+form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const title = inputText.value;
+    const due = inputDate.value ? new Date(inputDate.value).toISOString() : '';
+    if(!title.trim()){
+        alert('Введите название задачи');
+        return;
+    }
+    addTask(title, due);
+    form.reset();
+    inputText.focus();
+});
+
+btnAll.addEventListener('click', ()=>{
+    filterMode = 'all';
+    btnAll.classList.add('active');
+    btnActive.classList.remove('active');
+    btnDone.classList.remove('active');
+    render();
+});
+btnActive.addEventListener('click', ()=>{
+    filterMode = 'active';
+    btnAll.classList.remove('active');
+    btnActive.classList.add('active');
+    btnDone.classList.remove('active');
+    render();
+});
+btnDone.addEventListener('click', ()=>{
+    filterMode = 'done';
+    btnAll.classList.remove('active');
+    btnActive.classList.remove('active');
+    btnDone.classList.add('active');
+    render();
+});
+
+sortBtn.addEventListener('click', ()=>{
+    sortAsc = !sortAsc;
+    sortBtn.textContent = `Сортировать по дате (${sortAsc ? '↑' : '↓'})`;
+    render();
+});
+
+search.addEventListener('input', (e)=>{
+    searchQuery = e.target.value;
+    render();
+});
+
+
