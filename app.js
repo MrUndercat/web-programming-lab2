@@ -85,3 +85,173 @@ container.appendChild(listSection);
 
 const footer = createEl('footer', {className:'small', text:'Tip: перетащите задачу за правую "ручку", чтобы поменять порядок.'});
 container.appendChild(footer);
+
+function formatDate(d){
+    if(!d) return '';
+    const dt = new Date(d);
+    if(Number.isNaN(dt.getTime())) return '';
+    return dt.toLocaleDateString();
+}
+
+function render(){
+    let visible = tasks.slice();
+
+    if(searchQuery.trim()){
+        const q = searchQuery.trim().toLowerCase();
+        visible = visible.filter(t => (t.title||'').toLowerCase().includes(q));
+    }
+
+    if(filterMode === 'active') visible = visible.filter(t => !t.done);
+    if(filterMode === 'done') visible = visible.filter(t => t.done);
+
+    visible.sort((a,b) => {
+        const da = a.due ? new Date(a.due).getTime() : 0;
+        const db = b.due ? new Date(b.due).getTime() : 0;
+        if(da === db) return 0;
+        return sortAsc ? da - db : db - da;
+    });
+
+    list.innerHTML = '';
+    if(visible.length === 0){
+        const empty = createEl('div', {className:'small', text:'Задач пока нет.'});
+        list.appendChild(empty);
+        return;
+    }
+
+    visible.forEach(task => {
+        const li = createEl('li', {className:'task-card' + (task.done ? ' completed' : ''), attrs:{draggable:'true', 'data-id':task.id}});
+        const left = createEl('div', {className:'task-left'});
+        const chk = createEl('div', {className:'checkbox', attrs:{role:'button', 'aria-label':'Отметить как выполненное'}});
+        chk.addEventListener('click', ()=> toggleDone(task.id));
+        chk.textContent = task.done ? '✓' : '';
+        const titleWrap = createEl('div', {style:''});
+        const titleEl = createEl('div', {className:'task-title', text:task.title||''});
+        const meta = createEl('div', {className:'task-meta', text: task.due ? `Срок: ${formatDate(task.due)}` : 'Без срока'});
+        titleWrap.appendChild(titleEl);
+        titleWrap.appendChild(meta);
+        left.appendChild(chk);
+        left.appendChild(titleWrap);
+
+        const actions = createEl('div', {className:'task-actions'});
+        const editBtn = createEl('button', {className:'icon-btn', text:'Ред.', attrs:{type:'button','aria-label':'Редактировать'}});
+        const delBtn = createEl('button', {className:'icon-btn', text:'Удалить', attrs:{type:'button','aria-label':'Удалить'}});
+        const dragHandle = createEl('div', {className:'drag-handle', text:'☰', attrs:{title:'Перетащить'}});
+        actions.appendChild(editBtn);
+        actions.appendChild(delBtn);
+        actions.appendChild(dragHandle);
+
+        li.appendChild(left);
+        li.appendChild(actions);
+
+        editBtn.addEventListener('click', ()=> startEdit(task.id, li, titleEl, meta));
+        delBtn.addEventListener('click', ()=> removeTask(task.id));
+
+        li.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setData('text/plain', task.id);
+            li.classList.add('dragging');
+            if(e.dataTransfer.setDragImage) {
+                const img = document.createElement('canvas');
+                img.width = 1; img.height = 1;
+                e.dataTransfer.setDragImage(img, 0, 0);
+            }
+        });
+        li.addEventListener('dragend', () => {
+            li.classList.remove('dragging');
+        });
+
+        li.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            const dragging = document.querySelector('.dragging');
+            if(!dragging) return;
+            const over = li;
+            over.style.outline = '2px dashed rgba(59,130,246,0.2)';
+        });
+        li.addEventListener('dragleave', () => {
+            li.style.outline = '';
+        });
+        li.addEventListener('drop', (e) => {
+            e.preventDefault();
+            li.style.outline = '';
+            const draggedId = e.dataTransfer.getData('text/plain');
+            if(!draggedId) return;
+            reorderTasks(draggedId, task.id);
+        });
+
+        list.appendChild(li);
+    });
+}
+
+function addTask(title, due){
+    const t = {
+        id: uid(),
+        title: title.trim(),
+        due: due || '',
+        done: false
+    };
+    tasks.push(t);
+    saveTasks(tasks);
+    render();
+}
+
+function removeTask(id){
+    tasks = tasks.filter(t => t.id !== id);
+    saveTasks(tasks);
+    render();
+}
+
+function toggleDone(id){
+    const t = tasks.find(x => x.id === id);
+    if(!t) return;
+    t.done = !t.done;
+    saveTasks(tasks);
+    render();
+}
+
+function startEdit(id, li, titleEl, metaEl){
+    const task = tasks.find(t => t.id === id);
+    if(!task) return;
+    const inputT = createEl('input', {className:'edit-input', attrs:{type:'text'}});
+    inputT.value = task.title;
+    const inputD = createEl('input', {className:'edit-input', attrs:{type:'date'}});
+    inputD.value = task.due ? (new Date(task.due)).toISOString().slice(0,10) : '';
+    const saveBtn = createEl('button', {className:'btn', text:'Сохранить', attrs:{type:'button'}});
+    const cancelBtn = createEl('button', {className:'icon-btn', text:'Отмена', attrs:{type:'button'}});
+    titleEl.style.display = 'none';
+    metaEl.style.display = 'none';
+
+    const holder = titleEl.parentElement;
+    const controls = createEl('div', {style:'display:flex;gap:6px; margin-left:8px;'});
+    controls.appendChild(inputT);
+    controls.appendChild(inputD);
+    controls.appendChild(saveBtn);
+    controls.appendChild(cancelBtn);
+    holder.appendChild(controls);
+
+    saveBtn.addEventListener('click', ()=>{
+        const newTitle = inputT.value.trim();
+        const newDate = inputD.value ? new Date(inputD.value).toISOString() : '';
+        if(!newTitle){
+            alert('Название не может быть пустым');
+            return;
+        }
+        task.title = newTitle;
+        task.due = newDate;
+        saveTasks(tasks);
+        render();
+    });
+    cancelBtn.addEventListener('click', ()=>{
+        render();
+    });
+}
+
+function reorderTasks(draggedId, targetId){
+    if(draggedId === targetId) return;
+    const idxDragged = tasks.findIndex(t => t.id === draggedId);
+    const idxTarget = tasks.findIndex(t => t.id === targetId);
+    if(idxDragged === -1 || idxTarget === -1) return;
+    const [item] = tasks.splice(idxDragged,1);
+    const insertIndex = tasks.findIndex(t => t.id === targetId);
+    tasks.splice(insertIndex, 0, item);
+    saveTasks(tasks);
+    render();
+}
