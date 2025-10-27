@@ -1,3 +1,13 @@
+(function loadStyles(){
+    const href = 'styles.css'; // путь к файлу CSS (при необходимости измени)
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = href;
+    link.onload = () => console.log('styles loaded:', href);
+    link.onerror = () => console.warn('Failed to load styles:', href);
+    document.head.appendChild(link);
+})();
+
 const STORAGE_KEY = 'todo_tasks_v1';
 
 function loadTasks(){
@@ -208,6 +218,8 @@ function toggleDone(id){
 }
 
 function startEdit(id, li, titleEl, metaEl){
+    if (li.classList.contains('editing')) return;
+    li.classList.add('editing');
     const task = tasks.find(t => t.id === id);
     if(!task) return;
     const inputT = createEl('input', {className:'edit-input', attrs:{type:'text'}});
@@ -236,10 +248,12 @@ function startEdit(id, li, titleEl, metaEl){
         }
         task.title = newTitle;
         task.due = newDate;
+        li.classList.remove('editing');
         saveTasks(tasks);
         render();
     });
     cancelBtn.addEventListener('click', ()=>{
+        li.classList.remove('editing');
         render();
     });
 }
@@ -301,5 +315,8 @@ search.addEventListener('input', (e)=>{
     searchQuery = e.target.value;
     render();
 });
+
+render();
+
 
 
