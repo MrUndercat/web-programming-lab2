@@ -296,6 +296,17 @@ button:focus-visible, input:focus-visible {outline:3px solid rgba(59,130,246,0.1
     background: #2563eb;
 }
 
+.drag-handle {
+    touch-action: none; /* отключает нативный скролл при drag */
+    cursor: grab;
+}
+
+.task-card.dragging {
+    opacity: 0.85;
+    transform: scale(1.02);
+    transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
@@ -326,4 +337,5 @@ button:focus-visible, input:focus-visible {outline:3px solid rgba(59,130,246,0.1
         opacity: 0.85;
         transform: scale(1.02);
         transition: transform 0.15s ease, opacity 0.15s ease;
-    }}
+    }
+}
