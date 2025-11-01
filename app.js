@@ -1,5 +1,5 @@
 (function loadStyles(){
-    const href = 'styles.css'; // путь к файлу CSS (при необходимости измени)
+    const href = 'styles.css';
     const link = document.createElement('link');
     link.rel = 'stylesheet';
     link.href = href;
@@ -18,7 +18,7 @@ function loadTasks(){
         if(!Array.isArray(arr)) return [];
         return arr;
     } catch(e){
-        console.error('loadTasks error', e);
+        showModal('loadTasks error', e);
         return [];
     }
 }
@@ -243,7 +243,7 @@ function startEdit(id, li, titleEl, metaEl){
         const newTitle = inputT.value.trim();
         const newDate = inputD.value ? new Date(inputD.value).toISOString() : '';
         if(!newTitle){
-            alert('Название не может быть пустым');
+            showModal('Введите название задачи');
             return;
         }
         task.title = newTitle;
@@ -256,6 +256,41 @@ function startEdit(id, li, titleEl, metaEl){
         li.classList.remove('editing');
         render();
     });
+}
+
+function showModal(message){
+    // Создаем overlay
+    const overlay = createEl('div', {className:'modal-overlay', attrs:{role:'alertdialog', 'aria-modal':'true'}});
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100%';
+    overlay.style.height = '100%';
+    overlay.style.background = 'rgba(0,0,0,0.4)';
+    overlay.style.display = 'flex';
+    overlay.style.alignItems = 'center';
+    overlay.style.justifyContent = 'center';
+    overlay.style.zIndex = '1000';
+
+    // Создаем само окно
+    const box = createEl('div', {className:'modal-box'});
+    box.style.background = 'white';
+    box.style.padding = '16px 24px';
+    box.style.borderRadius = '12px';
+    box.style.boxShadow = '0 6px 20px rgba(0,0,0,0.2)';
+    box.style.maxWidth = '90%';
+    box.style.textAlign = 'center';
+
+    const text = createEl('div', {text: message});
+    text.style.marginBottom = '12px';
+
+    const btn = createEl('button', {text:'OK', className:'btn'});
+    btn.addEventListener('click', ()=> document.body.removeChild(overlay));
+
+    box.appendChild(text);
+    box.appendChild(btn);
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
 }
 
 function reorderTasks(draggedId, targetId){
@@ -275,7 +310,7 @@ form.addEventListener('submit', (e) => {
     const title = inputText.value;
     const due = inputDate.value ? new Date(inputDate.value).toISOString() : '';
     if(!title.trim()){
-        alert('Введите название задачи');
+        showModal('Введите название задачи');
         return;
     }
     addTask(title, due);
