@@ -278,6 +278,13 @@ function showModal(message) {
     box.appendChild(btn);
     overlay.appendChild(box);
     document.body.appendChild(overlay);
+
+    document.addEventListener('keydown', function escHandler(e) {
+        if (e.key === 'Escape') {
+            overlay.remove();
+            document.removeEventListener('keydown', escHandler);
+        }
+    });
 }
 
 
