@@ -307,59 +307,23 @@ button:focus-visible, input:focus-visible {outline:3px solid rgba(59,130,246,0.1
 }
 
 @media (max-width: 240px) {
-    .task-card {
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 6px;
-        font-size: 0.8em;
-    }
-
-    .task-left {
-        width: 100%;
-        gap: 0.5vw;
-    }
-
-    .task-actions {
-        width: 100%;
-        justify-content: flex-start;
-        gap: 4px;
-        margin-top: 0.5vw;
-        flex-wrap: wrap;
-    }
+    .task-card { flex-direction: column; align-items: flex-start; padding: 6px; font-size: 0.8em; }
+    .task-left { width: 100%; gap: 0.5vw; }
+    .task-actions { width: 100%; justify-content: flex-start; gap: 4px; margin-top: 0.5vw; flex-wrap: wrap; }
+    .drag-handle { order: 2; align-self: flex-end; }
+    .input-text, .input-date, .btn, .search, .icon-btn { width: 100%; font-size: 0.85em; padding: 6px 8px; }
+    .filters { width: 100%; gap: 3px; justify-content: center; margin-top: 0.5vw; }
+    .headerRow { flex-direction: column; align-items: flex-start; gap: 0.5vw; }
+    h1 { font-size: 1.2em; } .small { font-size: 0.75em; }
+    footer { font-size: 0.7em; }
 
     .drag-handle {
-        order: 2;
-        align-self: flex-end;
+        touch-action: none;
+        cursor: grab;
     }
 
-    .input-text, .input-date, .btn, .search, .icon-btn {
-        width: 100%;
-        font-size: 0.85em;
-        padding: 6px 8px;
-    }
-
-    .filters {
-        width: 100%;
-        gap: 3px;
-        justify-content: center;
-        margin-top: 0.5vw;
-    }
-
-    .headerRow {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5vw;
-    }
-
-    h1 {
-        font-size: 1.2em;
-    }
-
-    .small {
-        font-size: 0.75em;
-    }
-
-    footer {
-        font-size: 0.7em;
-    }
-}
+    .task-card.dragging {
+        opacity: 0.85;
+        transform: scale(1.02);
+        transition: transform 0.15s ease, opacity 0.15s ease;
+    }}

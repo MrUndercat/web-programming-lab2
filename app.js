@@ -172,10 +172,20 @@ function render(){
         li.addEventListener('dragover', (e) => {
             e.preventDefault();
             const dragging = document.querySelector('.dragging');
-            if(!dragging) return;
-            const over = li;
-            over.style.outline = '2px dashed rgba(59,130,246,0.2)';
+            if (!dragging || dragging === li) return;
+
+            const rect = li.getBoundingClientRect();
+            const offset = e.clientY - rect.top;
+            const middle = rect.height / 2;
+
+            li.style.outline = '2px dashed rgba(59,130,246,0.2)';
+            if (offset > middle) {
+                li.parentNode.insertBefore(dragging, li.nextSibling);
+            } else {
+                li.parentNode.insertBefore(dragging, li);
+            }
         });
+
         li.addEventListener('dragleave', () => {
             li.style.outline = '';
         });
@@ -346,6 +356,7 @@ search.addEventListener('input', (e)=>{
 });
 
 render();
+
 
 
 
