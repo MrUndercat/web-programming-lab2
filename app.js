@@ -287,7 +287,6 @@ function showModal(message) {
     });
 }
 
-
 function reorderTasks(draggedId, targetId){
     if(draggedId === targetId) return;
     const idxDragged = tasks.findIndex(t => t.id === draggedId);

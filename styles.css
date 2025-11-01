@@ -136,6 +136,92 @@ h1 { margin:0; font-size:clamp(16px, 4vw, 20px); letter-spacing:0.2px; }
     transition:transform .12s, box-shadow .12s, border-color .12s;
 }
 
+.task-card.editing {
+    background: linear-gradient(180deg, #f9fbff 0%, #eef6ff 100%);
+    border-color: rgba(59,130,246,0.25);
+    box-shadow: 0 0.4vw 1.2vw rgba(59,130,246,0.15);
+    transform: scale(1.01);
+    transition: all 0.2s ease;
+}
+
+.edit-input {
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(11,22,45,0.1);
+    background: #fff;
+    box-shadow: inset 0 1px 2px rgba(11,22,45,0.05);
+    font-size: clamp(12px, 2vw, 15px);
+    transition: all 0.15s ease;
+}
+
+.edit-input:focus {
+    border-color: var(--accent-1);
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+    outline: none;
+}
+
+/* экспериментальная попытка поменять то, как выглядит выбор даты для задачи */
+input[type="date"].edit-input {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding-right: 32px; /* место под иконку */
+    cursor: pointer;
+    background: linear-gradient(180deg, #fff, #f9fbff);
+    position: relative;
+}
+
+input[type="date"].edit-input::-webkit-calendar-picker-indicator {
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="%233b82f6" viewBox="0 0 24 24"><path d="M7 10h5v5H7z"/><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg>')
+    no-repeat center;
+    background-size: 18px;
+    opacity: 0.7;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: opacity 0.15s ease;
+}
+
+input[type="date"].edit-input::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
+
+input[type="date"].edit-input::-webkit-calendar-picker-indicator {
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="%233b82f6" viewBox="0 0 24 24"><path d="M7 10h5v5H7z"/><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg>')
+    no-repeat center;
+    background-size: 18px;
+    opacity: 0.7;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: opacity 0.15s ease;
+}
+
+.task-card.editing .btn {
+    background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+    color: white;
+    font-weight: 600;
+    padding: 8px 14px;
+}
+
+.task-card.editing .icon-btn {
+    background: rgba(11,22,45,0.03);
+    border: 1px solid rgba(11,22,45,0.08);
+    padding: 8px 12px;
+    transition: background 0.15s;
+}
+
+.task-card.editing .icon-btn:hover {
+    background: rgba(11,22,45,0.08);
+}
+
+.task-card.editing .edit-input + .edit-input {
+    margin-left: 6px;
+}
+
+.task-card.editing .edit-input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 .task-left { display:flex; gap:1vw; align-items:center; flex:1; min-width:0; }
 .checkbox { width:clamp(18px,4vw,22px); height:clamp(18px,4vw,22px); border-radius:0.5vw; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; font-weight:700; background:linear-gradient(180deg,#fff,#f3f9ff); }
 .checkbox:focus { outline:3px solid rgba(59,130,246,0.12); }
