@@ -163,6 +163,62 @@ button:focus-visible, input:focus-visible {outline:3px solid rgba(59,130,246,0.1
 .dark-theme .task-card {background: rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.03);}
 .dark-theme .small, .dark-theme .task-meta {color:#9aa6b2;}
 
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.2s ease-in-out;
+}
+
+.modal-box {
+    background: white;
+    padding: 16px 24px;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    max-width: 90%;
+    width: 320px;
+    text-align: center;
+    animation: slideUp 0.25s ease;
+}
+
+.modal-text {
+    margin-bottom: 12px;
+    font-size: 16px;
+    color: #333;
+}
+
+.modal-btn {
+    background: #3b82f6;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.modal-btn:hover {
+    background: #2563eb;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
 @media (max-width: 240px) {
     .task-card {
         flex-direction: column;
